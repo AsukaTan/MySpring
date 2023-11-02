@@ -1,5 +1,3 @@
-[TOC]
-
 # Goal
 
 This project aims to concrete my understanding in Spring by building a simple spring.
