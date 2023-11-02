@@ -1,5 +1,3 @@
-[TOC]
-
 # Goal
 
 This project aims to concrete my understanding in Spring by building a simple spring.
@@ -20,7 +18,9 @@ IoC 容器，也就是 BeanFactory，存在的意义就是将创建对象与使�
 
 ### 实现一个原始版本的 IoC 容器
 
-原始版本 Bean，我们先只管理两个属性：id 与 class。
+导入 dom4j-1.6.1.jar 包
+
+原始版本 Bean，我们先只管理两个属性：id 与 class
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -29,3 +29,16 @@ IoC 容器，也就是 BeanFactory，存在的意义就是将创建对象与使�
 </beans>
 ```
 
+### 构建 BeanDefinition
+
+创建`BeanDefinition`类
+
+### 实现 ClassPathXmlApplicationContext
+
+
+
+### 解耦 ClassPathXmlApplicationContext
+
+ClassPathXmlApplicationContext 承担了太多的功能，这并不符合我们常说的对象单一功能的原则.
+
+分解这个类，主要工作就是两个部分，一是提出一个最基础的核心容器，二是把 XML 这些外部配置信息的访问单独剥离出去，现在我们只有 XML 这一种方式，但是之后还有可能配置到 Web 或数据库文件里，拆解出去之后也便于扩展。
