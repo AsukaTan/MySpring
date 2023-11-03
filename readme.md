@@ -1,3 +1,5 @@
+[TOC]
+
 # Goal
 
 This project aims to concrete my understanding in Spring by building a simple spring.
@@ -14,13 +16,13 @@ IoC 容器，也就是 BeanFactory，存在的意义就是将创建对象与使�
 
 > xml外存 → bean在内存中的映像
 
-![img](https://static001.geekbang.org/resource/image/a3/c3/a382d7774c7aa504231721c7d28028c3.png?wh=1905x1253)
-
 ### 实现一个原始版本的 IoC 容器
 
-导入 dom4j-1.6.1.jar 包
+#### 导入 dom4j-1.6.1.jar 包
 
-原始版本 Bean，我们先只管理两个属性：id 与 class
+原始版本 Bean，我们先只管理两个属性
+
+id 与 class
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -29,16 +31,26 @@ IoC 容器，也就是 BeanFactory，存在的意义就是将创建对象与使�
 </beans>
 ```
 
-### 构建 BeanDefinition
+#### 构建 BeanDefinition
 
-创建`BeanDefinition`类
+简单的bean组成
 
-### 实现 ClassPathXmlApplicationContext
+```java
+private String id;
+private String className;
+```
 
+#### 实现 ClassPathXmlApplicationContext
 
+核心通过反射机制创造bean实例
+
+```java
+URL xmlPath = this.getClass().getClassLoader().getResource(fileName);
+```
 
 ### 解耦 ClassPathXmlApplicationContext
 
-ClassPathXmlApplicationContext 承担了太多的功能，这并不符合我们常说的对象单一功能的原则.
-
-分解这个类，主要工作就是两个部分，一是提出一个最基础的核心容器，二是把 XML 这些外部配置信息的访问单独剥离出去，现在我们只有 XML 这一种方式，但是之后还有可能配置到 Web 或数据库文件里，拆解出去之后也便于扩展。
+1. 创造bean factory接口以及实现类(实现bean的注册和获取)
+2. 创造resource接口以及实现类(高扩展性，不仅仅可以读取xml，后续扩展DB和Web资源配置)，同时继承`Iterator<Object>`，提供使用迭代器供其他类调用
+3. 创造XmlBeanDefinitionReader类，使用resource迭代器将xml中的element分别注册给bean factory
+4. 编写测试类
