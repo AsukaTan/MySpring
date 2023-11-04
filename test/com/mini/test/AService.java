@@ -1,5 +1,5 @@
 package com.mini.test;
 
-public interface Aservice {
+public interface AService {
     void sayHello();
 }

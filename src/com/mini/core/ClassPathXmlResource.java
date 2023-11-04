@@ -43,4 +43,6 @@ public class ClassPathXmlResource implements Resource {
     public Iterator<Object> iterator() {
         return null;
     }
+
+
 }
