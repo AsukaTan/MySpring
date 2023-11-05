@@ -103,13 +103,13 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
 
         try {
             clz = Class.forName(bd.getClassName());
-
             //handle constructor
             ArgumentValues argumentValues = bd.getConstructorArgumentValues();
             if (!argumentValues.isEmpty()) {
-                //通过反射获得
+                //创造空数组
                 Class<?>[] paramTypes = new Class<?>[argumentValues.getArgumentCount()];
                 Object[] paramValues =   new Object[argumentValues.getArgumentCount()];
+                //将参数导入数组
                 for (int i=0; i<argumentValues.getArgumentCount(); i++) {
                     ArgumentValue argumentValue = argumentValues.getIndexedArgumentValue(i);
                     if ("String".equals(argumentValue.getType()) || "java.lang.String".equals(argumentValue.getType())) {
