@@ -54,3 +54,41 @@ URL xmlPath = this.getClass().getClassLoader().getResource(fileName);
 2. 创造resource接口以及实现类(高扩展性，不仅仅可以读取xml，后续扩展DB和Web资源配置)，同时继承`Iterator<Object>`，提供使用迭代器供其他类调用
 3. 创造XmlBeanDefinitionReader类，使用resource迭代器将xml中的element分别注册给bean factory
 4. 编写测试类
+
+Q: synchronized + ConcurrentHashMap 同时使用的意义？
+
+> A: 它只是这个容器层面的，扩大到业务逻辑，可能由多个操作组成，业务操作上对同一个key值的业务数据在同时读写，这个业务逻辑层面的并发控制仍然还是要由我们自己来控制的。
+>
+> 除了ConcurrentHashMap存储数据之外，再用一个ConcurrentHashMap单独存储锁，如<key,  Object>,(注意：Java中的锁时所在对象上的，所以我们随便用一个Object就可以当锁)。进行业务操作的时候，从locl  map中先拿锁，然后用synchronized(lock){}将业务操作包起来保证并发安全和原子性。
+>
+> JDK 7
+>
+> Segment锁
+>
+> ![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c814a3b049894b8d9abccf1480c3a113~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+>
+> JDK 8
+>
+> **CAS + synchronized**
+>
+> ![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cc7d08086ca0484c999edf9d72e9dfd2~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp)
+
+
+
+## Update 11/5/2023
+
+1. #### 可以从xml文件读取property value和constructor带入目标类
+
+   1. 新增`propertyValue`, `ArgumentValue`类。以及`propertyValues`, `ArgumentValues`类成为容器类。
+
+   2. 修改`BeanDefinition`, 加入新参数如`singleton`或者`prototype`,以及`propertyValues`, `ArgumentValues`，承载新功能
+
+   3. 增加`BeanDefinition`的仓库方法`BeanDefinitionRegistry`，去更删改查`BeanDefinition`
+
+   4. 对于单例模式下的bean，增加`SingletonBeanRegistry`接口，并且创造`DefaultSingletonBeanRegistry`类
+
+      Q: 为什么`SimpleBeanFactory`不同时声明实现`SingletonBeanRegistry`并且继承它的默认实现类呢?
+
+      > A:  SimpleBeanFactory对外只希望外界知道自己是一个beanFactory和beanDefinitionRegistry，至于singletonBeanRegistry，它只希望作为一种内部的能力来使用，所以继承一个已经实现的类来拥有能力，但是声明接口的时候不声明这个接口。
+
+   
