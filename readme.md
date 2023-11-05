@@ -130,3 +130,7 @@ try {
 Spring 的做法是在 BeanFactory 中引入一个结构：`earlySingletonObjects`，这里面存放的就是早期的毛胚实例。创建 Bean  实例的时候，不用等到所有步骤完成，而是可以在属性还没有注入之前，就把早期的毛胚实例先保存起来，供属性注入时使用。
 
 ![img](https://static001.geekbang.org/resource/image/f4/ee/f4a1a6b8973eae18d9edb54cd8277bee.png?wh=1806x1482)
+
+
+
+To Be Continued
