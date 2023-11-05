@@ -153,33 +153,60 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 String pName = propertyValue.getName();
                 String pType = propertyValue.getType();
                 Object pValue = propertyValue.getValue();
+                boolean isRef = propertyValue.getIsRef();
 
                 Class<?>[] paramTypes = new Class<?>[1];
-                if ("String".equals(pType) || "java.lang.String".equals(pType)) {
-                    paramTypes[0] = String.class;
-                }
-                else if ("Integer".equals(pType) || "java.lang.Integer".equals(pType)) {
-                    paramTypes[0] = Integer.class;
-                }
-                else if ("int".equals(pType)) {
-                    paramTypes[0] = int.class;
-                }
-                else {
-                    paramTypes[0] = String.class;
+                Object[] paramValues = new Object[1];
+                //不是ref则普通加载
+                if(!isRef){
+                    if ("String".equals(pType) || "java.lang.String".equals(pType)) {
+                        paramTypes[0] = String.class;
+                    }
+                    else if ("Integer".equals(pType) || "java.lang.Integer".equals(pType)) {
+                        paramTypes[0] = Integer.class;
+                    }
+                    else if ("int".equals(pType)) {
+                        paramTypes[0] = int.class;
+                    }
+                    else {
+                        paramTypes[0] = String.class;
+                    }
+
+                    paramValues[0] = pValue;
+                }else{
+                    /**
+                     * 对 ref 所指向的另一个 Bean 再次调用 getBean() 方法，
+                     * 这个方法会获取到另一个 Bean 实例，这样就实现了另一个 Bean 的注入。
+                     * 这样一来，如果有多级引用，就会形成一个多级的 getBean() 调用链。
+                     * 由于在调用 getBean() 的时候会判断容器中是否包含了 bean instance，
+                     * 没有的话会立即创建，所以 XML 配置文件中声明 Bean 的先后次序是任意的。
+                     */
+                    try {
+                        //找到拥有该class作为域的class
+                        paramTypes[0] = Class.forName(pType);
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        //再次调用getBean创建ref的bean实例
+                        paramValues[0] = getBean((String)pValue);
+                    } catch (BeansException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
 
-                Object[] paramValues =   new Object[1];
-                paramValues[0] = pValue;
-
+                //手动构造set方法
                 String methodName = "set" + pName.substring(0,1).toUpperCase() + pName.substring(1);
 
                 Method method = null;
                 try {
+                    //通过set方法名和参数拿到该方法
                     method = clz.getMethod(methodName, paramTypes);
                 } catch (NoSuchMethodException | SecurityException e) {
                     e.printStackTrace();
                 }
                 try {
+                    //调用set方法set property
                     method.invoke(obj, paramValues);
                 } catch (IllegalAccessException | InvocationTargetException | IllegalArgumentException e) {
                     e.printStackTrace();

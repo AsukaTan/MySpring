@@ -5,6 +5,7 @@ public class AServiceImpl implements AService {
     private int level;
     private String property1;
     private String property2;
+    private BaseBaseService ref1;
 
     public String getProperty1() {
         return property1;
