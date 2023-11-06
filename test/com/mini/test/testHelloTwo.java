@@ -7,6 +7,7 @@ import org.dom4j.DocumentException;
 
 public class testHelloTwo {
     public static void main(String[] args) throws DocumentException {
+
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml");
         AService aService;
         try {

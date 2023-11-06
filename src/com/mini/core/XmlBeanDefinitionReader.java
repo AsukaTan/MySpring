@@ -70,7 +70,7 @@ public class XmlBeanDefinitionReader {
                 String pType = e.attributeValue("type");
                 String pName = e.attributeValue("name");
                 String pValue = e.attributeValue("value");
-                AVS.addArgumentValue(new ArgumentValue(pValue,pType,pName));
+                AVS.addArgumentValue(new ArgumentValue(pType,pName,pValue));
             }
             beanDefinition.setConstructorArgumentValues(AVS);
             //end of handle constructor

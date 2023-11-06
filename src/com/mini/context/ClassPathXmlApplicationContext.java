@@ -36,11 +36,18 @@ public class ClassPathXmlApplicationContext implements BeanFactory,ApplicationEv
     SimpleBeanFactory beanFactory;
 
     public ClassPathXmlApplicationContext(String fileName) throws DocumentException {
+        this(fileName, true);
+    }
+
+    public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) throws DocumentException {
         Resource res = new ClassPathXmlResource(fileName);
         SimpleBeanFactory bf = new SimpleBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(bf);
         reader.loadBeanDefinitions(res);
         this.beanFactory = bf;
+        if(!isRefresh){
+            this.beanFactory.refresh();
+        }
     }
 
     @Override
